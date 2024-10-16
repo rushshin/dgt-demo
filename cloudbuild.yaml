@@ -13,14 +13,13 @@ steps:
     args:
       - run
       - deploy
-      - openai
       - '--image'
       - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo:$TAG_NAME'
       - >-
         --service-account=shin-dev@grafana-cloud-poc-436906.iam.gserviceaccount.com
       - '--port=19527'
       - '--set-env-vars=TAG_NAME=$TAG_NAME'
-      - '--set-secrets=OPENAI_TOKEN=OPENAI_TOKEN:latest'
+      - '--set-secrets=DEMO_TOKENN=DEMO_TOKEN:latest'
       - '--region'
       - asia-east1
     entrypoint: gcloud
