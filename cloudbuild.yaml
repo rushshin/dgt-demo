@@ -3,18 +3,18 @@ steps:
     args:
       - build
       - '-t'
-      - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo:$TAG_NAME'
+      - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo'
       - .
   - name: gcr.io/cloud-builders/docker
     args:
       - push
-      - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo:$TAG_NAME'
+      - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo'
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     args:
       - run
       - deploy
       - '--image'
-      - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo:$TAG_NAME'
+      - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo'
       - >-
         --service-account=shin-dev@grafana-cloud-poc-436906.iam.gserviceaccount.com
       - '--port=19527'
@@ -24,7 +24,7 @@ steps:
       - asia-east1
     entrypoint: gcloud
 images:
-  - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo:$TAG_NAME'
+  - 'gcr.io/$PROJECT_ID/github.com/rushshin/dgt-demo'
 options:
   logging: GCS_ONLY
   defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
