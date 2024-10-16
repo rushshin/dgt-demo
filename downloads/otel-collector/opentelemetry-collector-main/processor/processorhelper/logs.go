@@ -1,0 +1,80 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+package processorhelper // import "go.opentelemetry.io/collector/processor/processorhelper"
+
+import (
+	"context"
+	"errors"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
+
+	"go.opentelemetry.io/collector/component"
+	"go.opentelemetry.io/collector/consumer"
+	"go.opentelemetry.io/collector/pdata/plog"
+	"go.opentelemetry.io/collector/processor"
+)
+
+// ProcessLogsFunc is a helper function that processes the incoming data and returns the data to be sent to the next component.
+// If error is returned then returned data are ignored. It MUST not call the next component.
+type ProcessLogsFunc func(context.Context, plog.Logs) (plog.Logs, error)
+
+type logProcessor struct {
+	component.StartFunc
+	component.ShutdownFunc
+	consumer.Logs
+}
+
+// NewLogsProcessor creates a processor.Logs that ensure context propagation and the right tags are set.
+func NewLogsProcessor(
+	_ context.Context,
+	set processor.Settings,
+	_ component.Config,
+	nextConsumer consumer.Logs,
+	logsFunc ProcessLogsFunc,
+	options ...Option,
+) (processor.Logs, error) {
+	// TODO: Add observability metrics support
+	if logsFunc == nil {
+		return nil, errors.New("nil logsFunc")
+	}
+
+	obs, err := newObsReport(ObsReportSettings{
+		ProcessorID:             set.ID,
+		ProcessorCreateSettings: set,
+	})
+	if err != nil {
+		return nil, err
+	}
+	obs.otelAttrs = append(obs.otelAttrs, attribute.String("otel.signal", "logs"))
+
+	eventOptions := spanAttributes(set.ID)
+	bs := fromOptions(options)
+	logsConsumer, err := consumer.NewLogs(func(ctx context.Context, ld plog.Logs) error {
+		span := trace.SpanFromContext(ctx)
+		span.AddEvent("Start processing.", eventOptions)
+		recordsIn := ld.LogRecordCount()
+
+		ld, err = logsFunc(ctx, ld)
+		span.AddEvent("End processing.", eventOptions)
+		if err != nil {
+			if errors.Is(err, ErrSkipProcessingData) {
+				return nil
+			}
+			return err
+		}
+		recordsOut := ld.LogRecordCount()
+		obs.recordInOut(ctx, recordsIn, recordsOut)
+		return nextConsumer.ConsumeLogs(ctx, ld)
+	}, bs.consumerOptions...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &logProcessor{
+		StartFunc:    bs.StartFunc,
+		ShutdownFunc: bs.ShutdownFunc,
+		Logs:         logsConsumer,
+	}, nil
+}
