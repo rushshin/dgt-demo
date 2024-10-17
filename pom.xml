@@ -65,17 +65,17 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>cub.util</groupId>
-			<artifactId>db-encrypt</artifactId>
-			<version>2.3.3-RELEASE</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>cub.util</groupId>-->
+<!--			<artifactId>db-encrypt</artifactId>-->
+<!--			<version>2.3.3-RELEASE</version>-->
+<!--		</dependency>-->
 
-		<dependency>
-			<groupId>dgt.cloud</groupId>
-			<artifactId>dgt-cloud-logging</artifactId>
-			<version>2.0.2</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>dgt.cloud</groupId>-->
+<!--			<artifactId>dgt-cloud-logging</artifactId>-->
+<!--			<version>2.0.2</version>-->
+<!--		</dependency>-->
 
 	</dependencies>
 

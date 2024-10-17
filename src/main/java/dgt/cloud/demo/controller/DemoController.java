@@ -20,6 +20,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 
 @RestController
@@ -112,7 +113,7 @@ public class DemoController {
         tranRs.setData(jsonBody);
         getDemoRs.setTranrs(tranRs);
 
-        System.out.println(System.getProperty("java.class.path"));
+        Logger.getLogger("demo").info("received request for otel");
 
         return getDemoRs;
     }
