@@ -28,4 +28,4 @@ COPY --from=builder /workdir/src/main/resources/* $WORK_PATH/configs/
 
 #======================== run ========================
 
-ENTRYPOINT exec ls $WORK_PATH/*.jar | xargs -i /bin/java -jar -Dspring.config.location=$WORK_PATH/configs/application.properties {}
+ENTRYPOINT exec ls $WORK_PATH/*.jar | xargs -i /bin/java -jar -Dspring.config.location=$WORK_PATH/configs/application.yml {}
