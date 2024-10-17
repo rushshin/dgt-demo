@@ -24,7 +24,7 @@ RUN mkdir -p /home/default
 RUN mkdir -p /home/default/configs
 
 COPY --from=builder /workdir/target/*.jar $WORK_PATH/
-COPY --from=builder /workdir/src/main/resources/config/*.properties $WORK_PATH/configs/
+COPY --from=builder /workdir/src/main/resources/* $WORK_PATH/configs/
 
 #======================== run ========================
 
