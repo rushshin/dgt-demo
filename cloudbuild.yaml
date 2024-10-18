@@ -13,14 +13,12 @@ steps:
     args:
       - run
       - deploy
-      - dgt-demo
+      - dgt-demo-asia
       - '--image'
       - 'gcr.io/$PROJECT_ID/dgt-demo'
       - >-
-        --service-account=shin-dev@$PROJECT_ID-436906.iam.gserviceaccount.com
+        --service-account=shin-cloud-build@$PROJECT_ID-436906.iam.gserviceaccount.com
       - '--port=19527'
-      - '--set-env-vars=TAG_NAME=$TAG_NAME'
-      - '--set-secrets=DEMO_TOKENN=DEMO_TOKEN:latest'
       - '--region'
       - asia-east1
     entrypoint: gcloud

@@ -32,4 +32,12 @@ COPY --from=builder /workdir/src/main/resources/* $WORK_PATH/configs/
 
 #======================== run ========================
 
-ENTRYPOINT exec ls $WORK_PATH/dgt-cloud-demo.jar | xargs -i /bin/java -javaagent:$WORK_PATH/opentelemetry-javaagent.jar -Dotel.service.name=dgt-cloud-demo -jar -Dspring.config.location=$WORK_PATH/configs/application.yml {}
+ENTRYPOINT ["java", "-javaagent:$WORK_PATH/opentelemetry-javaagent.jar", \
+     "-Dotel.service.name=dgt-cloud-demo", \
+     "-Dotel.resource.attributes=service.name=sample-code-serviceOwO", \
+     "-Dotel.exporter.otlp.protocol=grpc", \
+     "-Dotel.traces.exporter=otlp", \
+     "-Dotel.metrics.exporter=none", \
+     "-Dotel.logs.exporter=otlp", \
+     "-jar", "-Dspring.config.location=$WORK_PATH/configs/application.yml", \
+     "$WORK_PATH/dgt-cloud-demo.jar"]
