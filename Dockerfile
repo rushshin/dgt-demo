@@ -7,9 +7,11 @@ USER 0
 
 #======================== add configs and jar ========================
 RUN mkdir /workdir
+RUN mkdir /workdir/downloads
 WORKDIR /workdir
 
 COPY ./src /workdir/src
+COPY ./downloads/*.jar /workdir/downloads/
 COPY ./pom.xml /workdir/
 
 RUN mvn clean package -DskipTests
@@ -22,10 +24,12 @@ ENV WORK_PATH=/home/default
 #======================== configure environment ========================
 RUN mkdir -p /home/default
 RUN mkdir -p /home/default/configs
+RUN mkdir -p $WORK_PATH/downloads
 
 COPY --from=builder /workdir/target/*.jar $WORK_PATH/
+COPY --from=builder /workdir/downloads/opentelemetry-javaagent.jar $WORK_PATH/
 COPY --from=builder /workdir/src/main/resources/* $WORK_PATH/configs/
 
 #======================== run ========================
 
-ENTRYPOINT exec ls $WORK_PATH/*.jar | xargs -i /bin/java -jar -Dspring.config.location=$WORK_PATH/configs/application.yml {}
+ENTRYPOINT exec ls $WORK_PATH/dgt-cloud-demo.jar | xargs -i /bin/java -javaagent:$WORK_PATH/opentelemetry-javaagent.jar -Dotel.service.name=dgt-cloud-demo -jar -Dspring.config.location=$WORK_PATH/configs/application.yml {}
